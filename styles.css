@@ -16,10 +16,22 @@ body {
     overflow-x: hidden;
 }
 
+/* Make images responsive */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Ensure text doesn't overflow */
+* {
+    word-wrap: break-word;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
+    width: 100%;
 }
 
 /* Navigation Styles */
@@ -224,6 +236,8 @@ body {
     backdrop-filter: blur(10px);
     position: relative;
     overflow: hidden;
+    aspect-ratio: 1;
+    flex-shrink: 0;
 }
 
 /* Animated ring border */
@@ -284,6 +298,7 @@ body {
     border-radius: 50%;
     z-index: 1;
     position: relative;
+    aspect-ratio: 1;
 }
 
 /* Section Styles */
@@ -646,6 +661,49 @@ section {
 }
 
 /* Responsive Design */
+/* Large screens and desktops */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1200px;
+    }
+    
+    .hero-title {
+        font-size: 4rem;
+    }
+    
+    .skills-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .projects-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Medium screens and tablets (landscape) */
+@media (max-width: 1024px) {
+    .container {
+        padding: 0 30px;
+    }
+    
+    .hero-title {
+        font-size: 3.5rem;
+    }
+    
+    .skills-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .projects-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .about-content {
+        gap: 2rem;
+    }
+}
+
+/* Tablets (portrait) */
 @media (max-width: 768px) {
     .nav-menu {
         position: fixed;
@@ -658,6 +716,7 @@ section {
         transition: 0.3s;
         box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
         padding: 2rem 0;
+        z-index: 1000;
     }
 
     .nav-menu.active {
@@ -684,19 +743,41 @@ section {
         grid-template-columns: 1fr;
         text-align: center;
         gap: 2rem;
+        padding: 1rem 0;
+        justify-items: center;
+        align-items: center;
+    }
+
+    .hero-content {
+        order: 2;
+    }
+
+    .hero-image {
+        order: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
     }
 
     .hero-title {
-        font-size: 2.5rem;
+        font-size: 2.8rem;
+        line-height: 1.2;
+    }
+
+    .hero-subtitle {
+        font-size: 1.3rem;
     }
 
     .about-content {
         grid-template-columns: 1fr;
         text-align: center;
+        gap: 2rem;
     }
 
     .about-stats {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
     }
 
     .contact-content {
@@ -706,21 +787,79 @@ section {
 
     .hero-buttons {
         justify-content: center;
+        flex-wrap: wrap;
+        gap: 1rem;
     }
 
     .projects-grid {
         grid-template-columns: 1fr;
+        gap: 2rem;
     }
 
     .skills-grid {
         grid-template-columns: 1fr;
+        gap: 2rem;
     }
 
     .skill-items {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+
+    .contact-form {
+        padding: 1.5rem;
+    }
+
+    .social-links {
+        justify-content: center;
+        gap: 1.5rem;
     }
 }
 
+/* Small tablets and large phones */
+@media (max-width: 600px) {
+    .container {
+        padding: 0 20px;
+    }
+
+    .hero-title {
+        font-size: 2.3rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+    }
+
+    .section-title {
+        font-size: 2.2rem;
+    }
+
+    .about-stats {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .skill-items {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .project-links {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn {
+        width: 100%;
+        max-width: 250px;
+    }
+}
+
+/* Mobile phones */
 @media (max-width: 480px) {
     .container {
         padding: 0 15px;
@@ -728,23 +867,133 @@ section {
 
     .hero-title {
         font-size: 2rem;
+        line-height: 1.1;
     }
 
     .hero-subtitle {
-        font-size: 1.2rem;
+        font-size: 1rem;
     }
 
     .section-title {
-        font-size: 2rem;
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
     }
 
-    .btn {
-        padding: 10px 25px;
+    .section-subtitle {
         font-size: 0.9rem;
     }
 
-    .project-links {
-        flex-direction: column;
+    .btn {
+        padding: 12px 20px;
+        font-size: 0.9rem;
+    }
+
+    .project-card {
+        padding: 1.5rem;
+    }
+
+    .skill-items {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+    }
+
+    .skill-item {
+        padding: 0.8rem 1rem;
+    }
+
+    .contact-form {
+        padding: 1rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+
+    .social-links {
+        gap: 1rem;
+    }
+
+    .social-link {
+        width: 45px;
+        height: 45px;
+    }
+
+    .hero-image {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .hero-image .image-placeholder {
+        width: 250px;
+        height: 250px;
+    }
+
+    .about-image {
+        width: 200px;
+        height: 200px;
+    }
+
+    .navbar {
+        padding: 0 15px;
+    }
+
+    .nav-logo a {
+        font-size: 1.3rem;
+    }
+}
+
+/* Extra small phones */
+@media (max-width: 320px) {
+    .container {
+        padding: 0 10px;
+    }
+
+    .hero-title {
+        font-size: 1.7rem;
+    }
+
+    .hero-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+    }
+
+    .btn {
+        padding: 10px 15px;
+        font-size: 0.8rem;
+    }
+
+    .project-card {
+        padding: 1rem;
+    }
+
+    .contact-form {
+        padding: 0.8rem;
+    }
+
+    .social-link {
+        width: 40px;
+        height: 40px;
+    }
+
+    .hero-image {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .hero-image .image-placeholder {
+        width: 200px;
+        height: 200px;
     }
 }
 

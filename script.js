@@ -1,0 +1,424 @@
+// Mobile Navigation Toggle
+const navToggle = document.getElementById('nav-toggle');
+const navMenu = document.getElementById('nav-menu');
+
+navToggle.addEventListener('click', () => {
+    navMenu.classList.toggle('active');
+    navToggle.classList.toggle('active');
+});
+
+// Close mobile menu when clicking on a link
+document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+        navMenu.classList.remove('active');
+        navToggle.classList.remove('active');
+    });
+});
+
+// Smooth scrolling for navigation links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
+
+// Navbar background on scroll
+window.addEventListener('scroll', () => {
+    const navbar = document.querySelector('.navbar');
+    if (window.scrollY > 50) {
+        navbar.style.background = 'rgba(255, 255, 255, 0.98)';
+        navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.15)';
+    } else {
+        navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+        navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+    }
+});
+
+// Active navigation link highlighting
+window.addEventListener('scroll', () => {
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('.nav-link');
+    
+    let current = '';
+    sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (window.scrollY >= (sectionTop - 200)) {
+            current = section.getAttribute('id');
+        }
+    });
+
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${current}`) {
+            link.classList.add('active');
+        }
+    });
+});
+
+// Intersection Observer for animations
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('fade-in-up');
+        }
+    });
+}, observerOptions);
+
+// Observe elements for animation
+document.addEventListener('DOMContentLoaded', () => {
+    const animateElements = document.querySelectorAll('.skill-category, .project-card, .stat');
+    animateElements.forEach(el => observer.observe(el));
+});
+
+// Contact form handling
+const contactForm = document.getElementById('contact-form');
+contactForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Get form data
+    const formData = new FormData(this);
+    const name = formData.get('name');
+    const email = formData.get('email');
+    const subject = formData.get('subject');
+    const message = formData.get('message');
+    
+    // Simple validation
+    if (!name || !email || !subject || !message) {
+        showNotification('Please fill in all fields!', 'error');
+        return;
+    }
+    
+    if (!isValidEmail(email)) {
+        showNotification('Please enter a valid email address!', 'error');
+        return;
+    }
+    
+    // Simulate form submission
+    showNotification('Thank you! Your message has been sent successfully.', 'success');
+    this.reset();
+});
+
+// Email validation
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+// Notification system
+function showNotification(message, type) {
+    // Remove existing notifications
+    const existingNotification = document.querySelector('.notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+    
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+            <span>${message}</span>
+            <button class="notification-close">&times;</button>
+        </div>
+    `;
+    
+    // Add styles
+    notification.style.cssText = `
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        background: ${type === 'success' ? '#27ae60' : '#e74c3c'};
+        color: white;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        z-index: 1001;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+        max-width: 300px;
+    `;
+    
+    notification.querySelector('.notification-content').style.cssText = `
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    `;
+    
+    notification.querySelector('.notification-close').style.cssText = `
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.2rem;
+        cursor: pointer;
+        margin-left: auto;
+    `;
+    
+    // Add to DOM
+    document.body.appendChild(notification);
+    
+    // Animate in
+    setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+    }, 100);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        removeNotification(notification);
+    }, 5000);
+    
+    // Close button functionality
+    notification.querySelector('.notification-close').addEventListener('click', () => {
+        removeNotification(notification);
+    });
+}
+
+function removeNotification(notification) {
+    notification.style.transform = 'translateX(100%)';
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 300);
+}
+
+// Typing animation for hero title
+function typeWriter() {
+    const textElement = document.querySelector('.hero-title');
+    if (!textElement) return;
+    
+    const originalText = textElement.innerHTML;
+    const words = originalText.split(' ');
+    let currentWordIndex = 0;
+    let currentCharIndex = 0;
+    let isDeleting = false;
+    
+    function type() {
+        if (currentWordIndex === words.length) {
+            return; // Animation complete
+        }
+        
+        const currentWord = words[currentWordIndex];
+        
+        if (!isDeleting && currentCharIndex <= currentWord.length) {
+            const displayText = words.slice(0, currentWordIndex).join(' ') + 
+                              (currentWordIndex > 0 ? ' ' : '') + 
+                              currentWord.substring(0, currentCharIndex);
+            textElement.innerHTML = displayText + '<span class="cursor">|</span>';
+            currentCharIndex++;
+            setTimeout(type, 50);
+        } else if (currentCharIndex === currentWord.length + 1) {
+            currentWordIndex++;
+            currentCharIndex = 0;
+            setTimeout(type, 100);
+        }
+    }
+    
+    // Add cursor style
+    const style = document.createElement('style');
+    style.textContent = `
+        .cursor {
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Start typing animation immediately
+    setTimeout(type, 10);
+}
+
+// Initialize typing animation
+document.addEventListener('DOMContentLoaded', typeWriter);
+
+// Scroll to top functionality
+function createScrollToTop() {
+    const scrollButton = document.createElement('button');
+    scrollButton.innerHTML = '<i class="fas fa-arrow-up"></i>';
+    scrollButton.className = 'scroll-to-top';
+    
+    scrollButton.style.cssText = `
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        transition: all 0.3s ease;
+        opacity: 0;
+        visibility: hidden;
+        z-index: 1000;
+    `;
+    
+    document.body.appendChild(scrollButton);
+    
+    // Show/hide button based on scroll position
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            scrollButton.style.opacity = '1';
+            scrollButton.style.visibility = 'visible';
+        } else {
+            scrollButton.style.opacity = '0';
+            scrollButton.style.visibility = 'hidden';
+        }
+    });
+    
+    // Scroll to top functionality
+    scrollButton.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+    
+    // Hover effect
+    scrollButton.addEventListener('mouseenter', () => {
+        scrollButton.style.transform = 'translateY(-3px)';
+        scrollButton.style.boxShadow = '0 6px 16px rgba(102, 126, 234, 0.4)';
+    });
+    
+    scrollButton.addEventListener('mouseleave', () => {
+        scrollButton.style.transform = 'translateY(0)';
+        scrollButton.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.3)';
+    });
+}
+
+// Initialize scroll to top button
+document.addEventListener('DOMContentLoaded', createScrollToTop);
+
+// Skill progress animation
+function animateSkillBars() {
+    const skillItems = document.querySelectorAll('.skill-item');
+    
+    const skillObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animation = 'slideInLeft 0.6s ease-out forwards';
+            }
+        });
+    }, { threshold: 0.5 });
+    
+    skillItems.forEach(item => {
+        skillObserver.observe(item);
+    });
+    
+    // Add animation styles
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// Initialize skill animations
+document.addEventListener('DOMContentLoaded', animateSkillBars);
+
+// Project card hover effects
+document.addEventListener('DOMContentLoaded', () => {
+    const projectCards = document.querySelectorAll('.project-card');
+    
+    projectCards.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            card.style.transform = 'translateY(-10px) scale(1.02)';
+        });
+        
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+});
+
+// Preloader (optional)
+function createPreloader() {
+    const preloader = document.createElement('div');
+    preloader.className = 'preloader';
+    preloader.innerHTML = `
+        <div class="preloader-content">
+            <div class="spinner"></div>
+            <p>Loading...</p>
+        </div>
+    `;
+    
+    preloader.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease;
+    `;
+    
+    const style = document.createElement('style');
+    style.textContent = `
+        .preloader-content {
+            text-align: center;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    document.body.appendChild(preloader);
+    
+    // Remove preloader after page load
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            preloader.style.opacity = '0';
+            setTimeout(() => {
+                preloader.remove();
+            }, 300);
+        }, 200);
+    });
+}
+
+// Initialize preloader
+createPreloader();
+
+console.log('Portfolio website loaded successfully! 🎉');

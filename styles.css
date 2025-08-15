@@ -775,6 +775,18 @@ section {
         gap: 2rem;
     }
 
+    .about-image {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
+    }
+
+    .about-image .image-placeholder {
+        width: 200px;
+        height: 200px;
+    }
+
     .about-stats {
         grid-template-columns: repeat(2, 1fr);
         gap: 1.5rem;
@@ -837,6 +849,18 @@ section {
     .about-stats {
         grid-template-columns: 1fr;
         gap: 1rem;
+    }
+
+    .about-image {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
+    }
+
+    .about-image .image-placeholder {
+        width: 180px;
+        height: 180px;
     }
 
     .skill-items {
@@ -934,8 +958,15 @@ section {
     }
 
     .about-image {
-        width: 200px;
-        height: 200px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
+    }
+
+    .about-image .image-placeholder {
+        width: 180px;
+        height: 180px;
     }
 
     .navbar {
@@ -994,6 +1025,18 @@ section {
     .hero-image .image-placeholder {
         width: 200px;
         height: 200px;
+    }
+
+    .about-image {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
+    }
+
+    .about-image .image-placeholder {
+        width: 150px;
+        height: 150px;
     }
 }
 

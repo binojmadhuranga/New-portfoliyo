@@ -25,33 +25,6 @@ A modern, responsive portfolio website built with HTML, CSS, and JavaScript. Fea
 2. **Open** `index.html` in your web browser
 3. **Customize** the content with your information
 
-## Customization Guide
-
-### Personal Information
-
-**Update the following in `index.html`:**
-
-- Replace "Your Name" with your actual name
-- Update the hero title and description
-- Modify the about section text
-- Add your contact information
-- Update social media links
-
-
-## Technologies Used
-
-- **HTML5** - Semantic markup
-- **CSS3** - Modern styling with Flexbox/Grid
-- **JavaScript** - Interactive functionality
-- **Font Awesome** - Icon library
-
-## Contributing
-
-Feel free to fork this project and customize it for your own use. If you make improvements, pull requests are welcome!
-
-## License
-
-This project is open source and available under the [MIT License](LICENSE).
 
 ## Support
 

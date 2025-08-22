@@ -83,35 +83,77 @@ document.addEventListener('DOMContentLoaded', () => {
     animateElements.forEach(el => observer.observe(el));
 });
 
-// Contact form handling
+// Contact form handling with FormSubmit
 const contactForm = document.getElementById('contact-form');
-contactForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    // Get form data
-    const formData = new FormData(this);
-    const name = formData.get('name');
-    const email = formData.get('email');
-    const subject = formData.get('subject');
-    const message = formData.get('message');
-    
-    // Simple validation
-    if (!name || !email || !subject || !message) {
-        showNotification('Please fill in all fields!', 'error');
-        return;
-    }
-    
-    if (!isValidEmail(email)) {
-        showNotification('Please enter a valid email address!', 'error');
-        return;
-    }
-    
-    // Simulate form submission
-    showNotification('Thank you! Your message has been sent successfully.', 'success');
-    this.reset();
-});
 
-// Email validation
+if (contactForm) {
+    contactForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Show loading state
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Sending...';
+        submitBtn.disabled = true;
+        
+        // Get form data
+        const formData = new FormData(this);
+        const name = formData.get('name');
+        const email = formData.get('email');
+        const subject = formData.get('subject');
+        const message = formData.get('message');
+        
+        // Validate form
+        if (!name || !email || !subject || !message) {
+            showNotification('Please fill in all fields!', 'error');
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+            return;
+        }
+        
+        if (!isValidEmail(email)) {
+            showNotification('Please enter a valid email address!', 'error');
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+            return;
+        }
+        
+        try {
+            // Send to FormSubmit
+            const response = await fetch('https://formsubmit.co/binojmadhuranga2002.04.04@gmail.com', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                    subject: subject,
+                    message: message,
+                    _captcha: 'false',
+                    _subject: 'New Portfolio Contact Message'
+                })
+            });
+            
+            if (response.ok) {
+                showNotification('✅ Thank you! Your message has been sent successfully. I will get back to you soon!', 'success');
+                this.reset();
+            } else {
+                throw new Error('Failed to send message');
+            }
+            
+        } catch (error) {
+            console.error('Error sending message:', error);
+            showNotification('Sorry, there was an error sending your message. Please try again or email me directly at binojmadhuranga2002.04.04@gmail.com', 'error');
+        } finally {
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+        }
+    });
+}
+
+// Email validation (keep this for form validation if needed)
 function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -128,20 +170,31 @@ function showNotification(message, type) {
     // Create notification element
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
+    
+    // Set icon based on type
+    let icon = 'fa-exclamation-circle';
+    if (type === 'success') icon = 'fa-check-circle';
+    if (type === 'warning') icon = 'fa-exclamation-triangle';
+    
     notification.innerHTML = `
         <div class="notification-content">
-            <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+            <i class="fas ${icon}"></i>
             <span>${message}</span>
             <button class="notification-close">&times;</button>
         </div>
     `;
+    
+    // Set background color based on type
+    let bgColor = '#e74c3c'; // error
+    if (type === 'success') bgColor = '#27ae60';
+    if (type === 'warning') bgColor = '#f39c12';
     
     // Add styles
     notification.style.cssText = `
         position: fixed;
         top: 100px;
         right: 20px;
-        background: ${type === 'success' ? '#27ae60' : '#e74c3c'};
+        background: ${bgColor};
         color: white;
         padding: 1rem;
         border-radius: 8px;
@@ -193,6 +246,136 @@ function removeNotification(notification) {
             notification.parentNode.removeChild(notification);
         }
     }, 300);
+}
+
+// Long notification for detailed messages
+function showLongNotification(message, type) {
+    // Remove existing notifications
+    const existingNotification = document.querySelector('.long-notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+    
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `long-notification ${type}`;
+    
+    let icon = 'fa-info-circle';
+    if (type === 'success') icon = 'fa-check-circle';
+    if (type === 'warning') icon = 'fa-exclamation-triangle';
+    if (type === 'error') icon = 'fa-exclamation-circle';
+    
+    notification.innerHTML = `
+        <div class="notification-content">
+            <div class="notification-header">
+                <i class="fas ${icon}"></i>
+                <span>Message Details</span>
+                <button class="notification-close">&times;</button>
+            </div>
+            <div class="notification-body">
+                <pre>${message}</pre>
+                <button class="copy-btn" onclick="copyToClipboard('${message.replace(/'/g, "\\'")}')">📋 Copy Details</button>
+            </div>
+        </div>
+    `;
+    
+    // Set background color based on type
+    let bgColor = '#3498db'; // info
+    if (type === 'success') bgColor = '#27ae60';
+    if (type === 'warning') bgColor = '#f39c12';
+    if (type === 'error') bgColor = '#e74c3c';
+    
+    // Add styles
+    notification.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        border-left: 5px solid ${bgColor};
+        border-radius: 8px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        z-index: 1002;
+        max-width: 90vw;
+        max-height: 80vh;
+        overflow: auto;
+    `;
+    
+    // Style header
+    const header = notification.querySelector('.notification-header');
+    header.style.cssText = `
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem;
+        background: ${bgColor};
+        color: white;
+        font-weight: bold;
+    `;
+    
+    // Style body
+    const body = notification.querySelector('.notification-body');
+    body.style.cssText = `
+        padding: 1rem;
+        color: #333;
+    `;
+    
+    // Style pre
+    const pre = notification.querySelector('pre');
+    pre.style.cssText = `
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        font-family: monospace;
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+    `;
+    
+    // Style close button
+    const closeBtn = notification.querySelector('.notification-close');
+    closeBtn.style.cssText = `
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+        margin-left: auto;
+    `;
+    
+    // Style copy button
+    const copyBtn = notification.querySelector('.copy-btn');
+    copyBtn.style.cssText = `
+        background: ${bgColor};
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+    `;
+    
+    // Add to document
+    document.body.appendChild(notification);
+    
+    // Close button functionality
+    closeBtn.addEventListener('click', () => {
+        notification.remove();
+    });
+    
+    // Auto close after 30 seconds
+    setTimeout(() => {
+        if (document.body.contains(notification)) {
+            notification.remove();
+        }
+    }, 30000);
+}
+
+// Copy to clipboard function
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        showNotification('Details copied to clipboard!', 'success');
+    }).catch(() => {
+        showNotification('Please copy the details manually', 'warning');
+    });
 }
 
 // Typing animation for hero title

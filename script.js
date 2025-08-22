@@ -128,6 +128,7 @@ if (contactForm) {
             formData.append('_captcha', 'false');
             formData.append('_subject', `Portfolio Contact: ${subject}`);
             formData.append('_template', 'table');
+            formData.append('_autoresponse', 'Thank you for contacting Binoj Madhuranga! I will get back to you soon.');
             
             const response = await fetch('https://formsubmit.co/binojmadhuranga2002.04.04@gmail.com', {
                 method: 'POST',

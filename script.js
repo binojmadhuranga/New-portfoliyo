@@ -119,21 +119,19 @@ if (contactForm) {
         }
         
         try {
-            // Send to FormSubmit
+            // Send to FormSubmit with proper formatting
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('email', email);
+            formData.append('subject', subject);
+            formData.append('message', message);
+            formData.append('_captcha', 'false');
+            formData.append('_subject', `Portfolio Contact: ${subject}`);
+            formData.append('_template', 'table');
+            
             const response = await fetch('https://formsubmit.co/binojmadhuranga2002.04.04@gmail.com', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({
-                    name: name,
-                    email: email,
-                    subject: subject,
-                    message: message,
-                    _captcha: 'false',
-                    _subject: 'New Portfolio Contact Message'
-                })
+                body: formData
             });
             
             if (response.ok) {
